@@ -3,9 +3,19 @@ import 'package:quizz_app/start_screen.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
+    MaterialApp(
       home: Scaffold(
-        body: StartScreen(),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepOrangeAccent,
+                Colors.orangeAccent,
+              ],
+            ),
+          ),
+          child: const StartScreen(),
+        ),
       ),
     ),
   );
