@@ -21,13 +21,15 @@ class StartScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          OutlinedButton(
+          const Icon(Icons.query_builder),
+          OutlinedButton.icon(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
               foregroundColor: const Color.fromARGB(255, 54, 15, 0),
               backgroundColor: Colors.white,
             ),
-            child: const Text('Start Quiz'),
+            icon: const Icon(Icons.play_arrow),
+            label: const Text('Start Quiz'),
           ),
         ],
       ),
