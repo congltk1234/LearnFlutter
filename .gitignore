@@ -49,4 +49,6 @@ doc/api/
 **/web/
 **/windows/
 **/macos/
-**/.metadata
+
+**/.metadata*
+**/.gitignore*
