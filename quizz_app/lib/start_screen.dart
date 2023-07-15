@@ -12,7 +12,23 @@ class StartScreen extends StatelessWidget {
             'assets/images/quiz-logo.png',
             width: 300,
           ),
-          Text('Quizz App'),
+          const SizedBox(height: 80),
+          const Text(
+            'Second App: Quizz App',
+            style: TextStyle(
+              color: Color.fromARGB(255, 54, 15, 0),
+              fontSize: 24,
+            ),
+          ),
+          const SizedBox(height: 30),
+          OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 54, 15, 0),
+              backgroundColor: Colors.white,
+            ),
+            child: const Text('Start Quiz'),
+          ),
         ],
       ),
     );
