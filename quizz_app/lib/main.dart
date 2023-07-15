@@ -12,6 +12,8 @@ void main() {
                 Colors.deepOrangeAccent,
                 Colors.orangeAccent,
               ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
           child: const StartScreen(),
