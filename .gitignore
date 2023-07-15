@@ -50,5 +50,5 @@ doc/api/
 **/windows/
 **/macos/
 
-**/.metadata*
-**/.gitignore*
+**/.metadata
+**/.gitignore
