@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
-      // theme: ThemeData(useMaterial3: true),
-      home: Expenses(),
+    MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const Expenses(),
     ),
   );
 }
