@@ -1,3 +1,6 @@
+import 'package:expense_tracker/data/data.dart';
+import 'package:expense_tracker/expenses_list.dart';
+// import 'package:expense_tracker/model/expense.dart';
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
@@ -16,8 +19,8 @@ class _ExpensesState extends State<Expenses> {
     return Scaffold(
       body: Column(
         children: [
-          Text('Chart'),
-          Text('Expenses list'),
+          Expanded(child: ExpensesList(expenses: registeredExpenses)),
+          // Text(_registeredExpenses[0].date as String),
         ],
       ),
     );
