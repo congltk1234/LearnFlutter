@@ -30,12 +30,11 @@ class _GroceryListState extends State<GroceryList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping List'),
-        actions: [IconButton(onPressed: _addItem, icon: const Icon(Icons.add))],
-      ),
-      body: ListView.builder(
+    Widget mainContent = const Center(
+      child: Text('No Items found. Start adding some!.'),
+    );
+    if (_groceryItems.isNotEmpty) {
+      mainContent = ListView.builder(
         itemCount: _groceryItems.length,
         itemBuilder: (ctx, index) => ListTile(
           title: Text(_groceryItems[index].name),
@@ -46,7 +45,14 @@ class _GroceryListState extends State<GroceryList> {
           ),
           trailing: Text(_groceryItems[index].quantity.toString()),
         ),
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shopping List'),
+        actions: [IconButton(onPressed: _addItem, icon: const Icon(Icons.add))],
       ),
+      body: mainContent,
     );
   }
 }
