@@ -29,9 +29,25 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _removeItem(GroceryItem item) {
+    final itemIndex = _groceryItems.indexOf(item);
+
     setState(() {
       _groceryItems.remove(item);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 2),
+        content: const Text('Item deleted'),
+        action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              setState(() {
+                _groceryItems.insert(itemIndex, item);
+              });
+            }),
+      ),
+    );
   }
 
   @override
@@ -47,6 +63,11 @@ class _GroceryListState extends State<GroceryList> {
             _removeItem(_groceryItems[index]);
           },
           key: ValueKey(_groceryItems[index]),
+          background: Container(
+            color: Theme.of(context).colorScheme.error.withOpacity(0.75),
+            // margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: 0),
+          ),
           child: ListTile(
             title: Text(_groceryItems[index].name),
             leading: Container(
