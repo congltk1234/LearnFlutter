@@ -17,6 +17,7 @@ class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
 
   var _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -30,6 +31,12 @@ class _GroceryListState extends State<GroceryList> {
         'shopping-list.json');
 
     final response = await http.get(url);
+    print(response.statusCode);
+    if (response.statusCode >= 400) {
+      setState(() {
+        _error = 'Failed to fetch Data. Please try again later.';
+      });
+    }
     final Map<String, dynamic> mapData = json.decode(response.body);
     final List<GroceryItem> _loadedItems = [];
     for (final item in mapData.entries) {
@@ -67,12 +74,43 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
-  void _removeItem(GroceryItem item) {
+  void _undoItem(GroceryItem item) async {
+    final url = Uri.https(
+        'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'shopping-list.json');
+    await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(
+        {
+          'name': item.name,
+          'quantity': item.quantity,
+          'category': item.category.title,
+        },
+      ),
+    );
+  }
+
+  void _removeItem(GroceryItem item) async {
+    final url = Uri.https(
+        'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'shopping-list/${item.id}.json');
+
+    final response = await http.delete(url);
+
     final itemIndex = _groceryItems.indexOf(item);
 
     setState(() {
       _groceryItems.remove(item);
     });
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _groceryItems.insert(itemIndex, item);
+      });
+    }
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -83,6 +121,7 @@ class _GroceryListState extends State<GroceryList> {
             onPressed: () {
               setState(() {
                 _groceryItems.insert(itemIndex, item);
+                _undoItem(item);
               });
             }),
       ),
@@ -124,6 +163,13 @@ class _GroceryListState extends State<GroceryList> {
         ),
       );
     }
+
+    if (_error != null) {
+      mainContent = Center(
+        child: Text(_error!),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping List'),

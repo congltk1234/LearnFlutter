@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:shopping_list/data/categories_data.dart';
 import 'package:shopping_list/models/category.dart';
 import 'package:shopping_list/models/grocery_item.dart';
-import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -44,23 +46,11 @@ class _NewItemState extends State<NewItem> {
         ),
       );
 
-      http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(
-          {
-            'name': _enteredName,
-            'quantity': _enteredQuantity,
-            'category': _selectedCategory.title,
-          },
-        ),
-      );
-
-      print(response.body);
-
       final Map<String, dynamic> resData = json.decode(response.body);
+
+      if (!context.mounted) {
+        return;
+      }
 
       Navigator.of(context).pop(
         GroceryItem(
@@ -88,17 +78,21 @@ class _NewItemState extends State<NewItem> {
               TextFormField(
                 maxLength: 50,
                 decoration: const InputDecoration(
-                  labelText: 'Name',
+                  label: Text('Name'),
                 ),
                 validator: (value) {
                   if (value == null ||
                       value.isEmpty ||
+                      value.trim().length <= 1 ||
                       value.trim().length > 50) {
-                    return 'Must be between 1 to 50 chars.';
+                    return 'Must be between 1 and 50 characters.';
                   }
                   return null;
                 },
                 onSaved: (value) {
+                  // if (value == null) {
+                  //   return;
+                  // }
                   _enteredName = value!;
                 },
               ), // instead of TextField()
@@ -108,16 +102,16 @@ class _NewItemState extends State<NewItem> {
                   Expanded(
                     child: TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Quantity',
+                        label: Text('Quantity'),
                       ),
-                      initialValue: '1',
                       keyboardType: TextInputType.number,
+                      initialValue: _enteredQuantity.toString(),
                       validator: (value) {
                         if (value == null ||
                             value.isEmpty ||
                             int.tryParse(value) == null ||
                             int.tryParse(value)! <= 0) {
-                          return 'Must be Valid, positive number.';
+                          return 'Must be a valid, positive number.';
                         }
                         return null;
                       },
@@ -156,17 +150,18 @@ class _NewItemState extends State<NewItem> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: _isSending
-                          ? null
-                          : () {
-                              _formKey.currentState!.reset();
-                            },
-                      child: const Text('Reset')),
+                    onPressed: _isSending
+                        ? null
+                        : () {
+                            _formKey.currentState!.reset();
+                          },
+                    child: const Text('Reset'),
+                  ),
                   ElevatedButton(
                     onPressed: _isSending ? null : _saveItem,
                     child: _isSending
