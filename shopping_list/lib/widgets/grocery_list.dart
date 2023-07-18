@@ -29,35 +29,46 @@ class _GroceryListState extends State<GroceryList> {
     final url = Uri.https(
         'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
         'shopping-list.json');
+    try {
+      final response = await http.get(url);
 
-    final response = await http.get(url);
-    print(response.statusCode);
-    if (response.statusCode >= 400) {
+      if (response.statusCode >= 400) {
+        setState(() {
+          _error = 'Failed to fetch Data. Please try again later.';
+        });
+      }
+
+      if (response.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+      final Map<String, dynamic> mapData = json.decode(response.body);
+      final List<GroceryItem> _loadedItems = [];
+      for (final item in mapData.entries) {
+        final category = categories.entries
+            .firstWhere((categoryItem) =>
+                categoryItem.value.title == item.value['category'])
+            .value;
+        _loadedItems.add(
+          GroceryItem(
+            id: item.key,
+            name: item.value['name'],
+            quantity: item.value['quantity'],
+            category: category,
+          ),
+        );
+      }
       setState(() {
-        _error = 'Failed to fetch Data. Please try again later.';
+        _groceryItems = _loadedItems;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Something went wrong. Please try again later.';
       });
     }
-    final Map<String, dynamic> mapData = json.decode(response.body);
-    final List<GroceryItem> _loadedItems = [];
-    for (final item in mapData.entries) {
-      final category = categories.entries
-          .firstWhere((categoryItem) =>
-              categoryItem.value.title == item.value['category'])
-          .value;
-      _loadedItems.add(
-        GroceryItem(
-          id: item.key,
-          name: item.value['name'],
-          quantity: item.value['quantity'],
-          category: category,
-        ),
-      );
-    }
-
-    setState(() {
-      _groceryItems = _loadedItems;
-      _isLoading = false;
-    });
   }
 
   void _addItem() async {
