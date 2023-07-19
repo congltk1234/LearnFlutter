@@ -32,6 +32,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0;
   var _isSending = false;
+  var _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -49,11 +51,29 @@ class _MyHomePageState extends State<MyHomePage> {
     final url = Uri.https(
         'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
         '/TimesClick.json');
-    final response = await http.get(url);
-    final loadedData = json.decode(response.body);
-    setState(() {
-      _counter = loadedData;
-    });
+    try {
+      final response = await http.get(url);
+      if (response.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+      if (response.statusCode >= 400) {
+        setState(() {
+          _error = 'Failed to fetch Data. Please try again later.';
+        });
+      }
+      final loadedData = json.decode(response.body);
+      setState(() {
+        _counter = loadedData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Something went wrong. Please try again later.';
+      });
+    }
   }
 
   void _postCounter() async {
@@ -91,12 +111,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
+    Widget? mainContent;
+
+    if (_isLoading) {
+      mainContent = const Center(child: CircularProgressIndicator());
+    } else {
+      mainContent = Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -109,7 +129,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+      );
+    }
+    if (_error != null) {
+      mainContent = Center(
+        child: Text(_error!),
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
       ),
+      body: mainContent,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
