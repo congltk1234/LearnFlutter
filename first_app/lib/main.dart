@@ -61,6 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isSending = false;
     });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text('Already Post to FireBase'),
+      ),
+    );
   }
 
   @override
