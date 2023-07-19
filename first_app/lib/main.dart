@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -28,12 +30,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  var _counter = 0;
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  void _postCounter() async {
+    final url = Uri.https(
+        'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'count-click.json');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(
+        {
+          'TimesClick': _counter,
+        },
+      ),
+    );
   }
 
   @override
@@ -73,11 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
               TextButton(
                 onPressed: () {
                   // _formKey.currentState!.reset();
+                  setState(() {
+                    _counter = 0;
+                  });
                 },
                 child: const Text('Reset'),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: _postCounter,
                 child: const Text('Push to DataBase'),
               ),
             ],
