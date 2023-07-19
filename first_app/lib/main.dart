@@ -57,10 +57,32 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: _incrementCounter,
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () {
+                  // _formKey.currentState!.reset();
+                },
+                child: const Text('Reset'),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text('Push to DataBase'),
+              ),
+            ],
+          ),
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
