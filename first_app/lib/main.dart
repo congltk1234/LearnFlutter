@@ -45,8 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     final url = Uri.https(
         'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
-        'count-click.json');
-    final response = await http.post(
+        'click/.json');
+    final response = await http.patch(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         duration: Duration(seconds: 2),
+        backgroundColor: Colors.green,
         content: Text('Already Post to FireBase'),
       ),
     );
