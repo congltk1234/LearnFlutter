@@ -33,9 +33,26 @@ class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0;
   var _isSending = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadItem();
+  }
+
   void _incrementCounter() {
     setState(() {
       _counter++;
+    });
+  }
+
+  void _loadItem() async {
+    final url = Uri.https(
+        'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+        '/TimesClick.json');
+    final response = await http.get(url);
+    final loadedData = json.decode(response.body);
+    setState(() {
+      _counter = loadedData;
     });
   }
 
@@ -45,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     final url = Uri.https(
         'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
-        'click/.json');
+        '/.json');
     final response = await http.patch(
       url,
       headers: {
