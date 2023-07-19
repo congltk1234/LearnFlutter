@@ -32,6 +32,7 @@ class _NewItemState extends State<NewItem> {
       final url = Uri.https(
           'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
+
       final response = await http.post(
         url,
         headers: {
@@ -90,9 +91,6 @@ class _NewItemState extends State<NewItem> {
                   return null;
                 },
                 onSaved: (value) {
-                  // if (value == null) {
-                  //   return;
-                  // }
                   _enteredName = value!;
                 },
               ), // instead of TextField()
