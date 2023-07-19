@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0;
+  var _isSending = false;
 
   void _incrementCounter() {
     setState(() {
@@ -39,6 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _postCounter() async {
+    setState(() {
+      _isSending = true;
+    });
     final url = Uri.https(
         'shopping-list-flutterapp-default-rtdb.asia-southeast1.firebasedatabase.app',
         'count-click.json');
@@ -53,6 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
+
+    setState(() {
+      _isSending = false;
+    });
   }
 
   @override
@@ -91,21 +99,28 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               TextButton(
                 onPressed: () {
-                  // _formKey.currentState!.reset();
-                  setState(() {
-                    _counter = 0;
-                  });
+                  _isSending
+                      ? null
+                      : setState(() {
+                          _counter = 0;
+                        });
                 },
                 child: const Text('Reset'),
               ),
               ElevatedButton(
-                onPressed: _postCounter,
-                child: const Text('Push to DataBase'),
+                onPressed: _isSending ? null : _postCounter,
+                child: _isSending
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(),
+                      )
+                    : const Text('Push to DataBase'),
               ),
             ],
           ),
         ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
