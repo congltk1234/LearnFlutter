@@ -1,3 +1,4 @@
+import 'package:chat_app/widgets/msg_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -33,12 +34,27 @@ class ChatMessages extends StatelessWidget {
         final loadedMsg = chatSnapshots.data!.docs;
 
         return ListView.builder(
-          padding: const EdgeInsets.only(bottom: 40, left: 13, right: 13),
-          reverse: true,
-          itemCount: loadedMsg.length,
-          itemBuilder: (context, index) =>
-              Text(loadedMsg[index].data()['text']),
-        );
+            padding: const EdgeInsets.only(bottom: 40, left: 13, right: 13),
+            reverse: true,
+            itemCount: loadedMsg.length,
+            itemBuilder: (context, index) {
+              final chatMsg = loadedMsg[index].data();
+              final nextChatMsg = index + 1 < loadedMsg.length
+                  ? loadedMsg[index + 1].data()
+                  : null;
+
+              final currentMsgUserId = chatMsg['userId'];
+              final nextMsgUserId =
+                  nextChatMsg != null ? nextChatMsg['userId'] : null;
+
+              final nextUserIsSame = nextMsgUserId == currentMsgUserId;
+
+              if (nextUserIsSame) {
+                return MessageBubble.next(message: chatMsg['text'], isMe: true);
+              }
+            }
+            // Text(loadedMsg[index].data()['text']),
+            );
       },
     );
   }
